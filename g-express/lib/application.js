@@ -1,38 +1,20 @@
 const http = require('http')
-const url = require('url')
 
+const Router = require('./router/index')
 function Application() {
-  // 默认路由
-  this.routers = [
-    {
-      path: '*',
-      method: 'all',
-      handler(req, res) {
-        res.end(`Cannot g-express ${req.method} ${req.url}`)
-      }
-    }
-  ]
+  this._router = new Router()
 }
 
 Application.prototype.get = function (path, handler) {
-  this.routers.push({
-    path,
-    method: 'get',
-    handler
-  })
+  this._router.get(path, handler)
 }
 
 Application.prototype.listen = function() {
   const server = http.createServer((req, res) => {
-    const { pathname } = url.parse(req.url)
-    const requestMethod = req.method.toLowerCase()
-    for (let i = 0; i < this.routers.length; i++) {
-      const { path, method, handler } = this.routers[i]
-      if(path === pathname && method === requestMethod) {
-        return handler(req, res)
-      }
+    function done() {
+      res.end(`Cannot g-express ${req.method} ${req.url}`)
     }
-    return this.routers[0].handler(req, res)
+    this._router.handle(req, res, done)
   })
   server.listen(...arguments)
 }
