@@ -27,6 +27,20 @@ methods.forEach((method) => {
   }
 })
 
+Router.prototype.use = function(path, ...handlers) {
+ if(typeof path == 'function') {
+   handlers.unshift(path)
+   path = '/'
+ }
+ for (let i = 0; i < handlers.length; i++) {
+   const layer = new Layer(path, handlers[i])
+   // 中间件不需要route属性
+   layer.route = undefined
+   this.stack.push(layer)
+   
+ }
+}
+
 Router.prototype.handle = function(req, res, out) {
   // 1.需要取出路由系统中Router存放的layer依次执行
   const { pathname } = url.parse(req.url)
@@ -37,11 +51,17 @@ Router.prototype.handle = function(req, res, out) {
     const layer = this.stack[idx++]
     // 需要查看layer上的path和当前请求的路径是否一致，如果一致调用dispatch方法
     if(layer.match(pathname)) {
-      // 路径匹配到了，需要让layer上对应的dispatch执行
-      if(layer.route.methods[req.method.toLowerCase()]) { // 加速匹配
+
+      // 中间件没有方法可以匹配
+      if(!layer.route) { // 中间件
         layer.handle_request(req, res, next)
       } else {
-        next()
+        // 路径匹配到了，需要让layer上对应的dispatch执行
+        if(layer.route.methods[req.method.toLowerCase()]) { // 加速匹配
+          layer.handle_request(req, res, next)
+        } else {
+          next()
+        }
       }
     } else {
       next()

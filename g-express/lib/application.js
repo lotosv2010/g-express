@@ -21,6 +21,11 @@ methods.forEach((method) => {
   }
 })
 
+Application.prototype.use = function() {
+  this.lazy_route()
+  this._router.use(...arguments)
+}
+
 Application.prototype.listen = function() {
   const server = http.createServer((req, res) => {
     function done() { // 不属于路由层
