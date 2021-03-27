@@ -45,16 +45,29 @@ Router.prototype.handle = function(req, res, out) {
   // 1.需要取出路由系统中Router存放的layer依次执行
   const { pathname } = url.parse(req.url)
   let idx = 0
-  const next = () => {
+  const next = (error) => {
     // 遍历完后还没有找到，那就直接走出路由系统即可
     if(idx >= this.stack.length) return out()
     const layer = this.stack[idx++]
+    if(error) {
+      // 统一错误处理
+      if(!layer.route) {
+        layer.handle_error(error, req, res, next)
+      } else {
+        // 路由则跳过，继续携带错误向下执行
+        next(error)
+      }
+      return
+    }
     // 需要查看layer上的path和当前请求的路径是否一致，如果一致调用dispatch方法
     if(layer.match(pathname)) {
-
       // 中间件没有方法可以匹配
       if(!layer.route) { // 中间件
-        layer.handle_request(req, res, next)
+        if(layer.handler.length !== 4) {
+          layer.handle_request(req, res, next)
+        } else {
+          next()
+        }
       } else {
         // 路径匹配到了，需要让layer上对应的dispatch执行
         if(layer.route.methods[req.method.toLowerCase()]) { // 加速匹配

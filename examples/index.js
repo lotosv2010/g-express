@@ -25,6 +25,7 @@ app.use((req, res, next) => {
 })
 
 app.use('/', (req, res, next) => {
+  next('错误')
   res.end('ok')
 })
 
@@ -48,6 +49,11 @@ app.put('/user', (req, res) => {
 })
 app.delete('/user', (req, res) => {
   res.end('Got a DELETE request at /user')
+})
+
+app.use((error, req, res, next) => {
+  // res.header("Content-Type", "application/json; charset=utf-8")
+  res.end('error' + error)
 })
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)

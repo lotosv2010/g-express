@@ -9,3 +9,7 @@
 ## 中间件
 
 ![中间件]('./examples/img/middleware.png)
+
+## 错误处理
+
+![错误处理]('./examples/img/error.png)
