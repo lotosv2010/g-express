@@ -4,10 +4,21 @@ const Route = require('./route')
 const methods = require('methods')
 
 function Router (){
-  this.stack = [] // 维护所有的路由
+  const router = (req, res, next) => {
+    // 二级路由
+    // 处理请求
+    // 让对应的路由系统去进行匹配操作
+    router.handle(req, res, next)
+  }
+  // 老得逻辑
+  router.stack = [] // 维护所有的路由
+  router.__proto__ = proto
+  return router
 }
 
-Router.prototype.route = function(path) {
+const proto = {}
+
+proto.route = function(path) {
   const route = new Route() // 产生route
   // 产生 layer 让 layer和route进行关联
   const layer = new Layer(path, route.dispatch.bind(route))
@@ -17,7 +28,7 @@ Router.prototype.route = function(path) {
 }
 
 methods.forEach((method) => {
-  Router.prototype[method] = function(path, handlers) {
+  proto[method] = function(path, handlers) {
     // 1.用户调用get时需要保存成一个layer放到栈中
     // 2.产生一个Route实例和当前的layer创造关系
     // 3.要将route的dispatch方法存放到layer上
@@ -27,7 +38,7 @@ methods.forEach((method) => {
   }
 })
 
-Router.prototype.use = function(path, ...handlers) {
+proto.use = function(path, ...handlers) {
  if(typeof path == 'function') {
    handlers.unshift(path)
    path = '/'
@@ -41,14 +52,20 @@ Router.prototype.use = function(path, ...handlers) {
  }
 }
 
-Router.prototype.handle = function(req, res, out) {
+proto.handle = function(req, res, out) {
   // 1.需要取出路由系统中Router存放的layer依次执行
-  const { pathname } = url.parse(req.url)
+  let { pathname } = url.parse(req.url)
   let idx = 0
+  let removed = ''
   const next = (error) => {
     // 遍历完后还没有找到，那就直接走出路由系统即可
     if(idx >= this.stack.length) return out()
     const layer = this.stack[idx++]
+    if(removed) {
+      // 增加路径方便出来时匹配其他的中间件
+      req.url = removed + pathname
+      removed = ''
+    }
     if(error) {
       // 统一错误处理
       if(!layer.route) {
@@ -64,9 +81,14 @@ Router.prototype.handle = function(req, res, out) {
       // 中间件没有方法可以匹配
       if(!layer.route) { // 中间件
         if(layer.handler.length !== 4) {
+          if(layer.path !== '/') {
+            removed = layer.path // 中间件的路径
+            req.url = pathname.slice(removed.length)
+            console.log('pathname', pathname, layer.path)
+          }
           layer.handle_request(req, res, next)
         } else {
-          next()
+          next() // 错误中间件
         }
       } else {
         // 路径匹配到了，需要让layer上对应的dispatch执行

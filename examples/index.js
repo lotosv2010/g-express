@@ -2,6 +2,8 @@ const express = require('../g-express')
 // const express = require('express')
 const app = express()
 const port = 4000
+const userRouter = require('./route/userRouter')
+const roleRouter = require('./route/roleRouter')
 
 // 1.路径位 / 表示任何路径都能匹配到
 // 2.如果以这个路径(匹配开头一段路径)也可以匹配到
@@ -14,6 +16,9 @@ app.use((req, res, next) => {
   next()
 })
 
+app.use('/user', userRouter)
+app.use('/role', roleRouter)
+
 app.use((req, res, next) => {
   console.log(2);
   next()
@@ -25,14 +30,11 @@ app.use((req, res, next) => {
 })
 
 app.use('/', (req, res, next) => {
-  next('错误')
+  next()
   res.end('ok')
 })
 
-app.delete('/', (req, res) => {
-  res.end('this is page!!')
-})
-app.put('/', (req, res) => {
+app.get('/', (req, res) => {
   res.end('this is page!!')
 })
 app.post('/', (req, res) => {

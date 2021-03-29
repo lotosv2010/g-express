@@ -22,6 +22,9 @@ Route.prototype.dispatch = function(req, res, out) {
 
 methods.forEach((method) => {
   Route.prototype[method] = function(handlers) {
+    if(!Array.isArray(handlers)) {
+      handlers = [handlers]
+    }
     handlers.forEach(handler => {
       const layer = new Layer('', handler) // 路径没有意义
       layer.method = method // 标记layer上是什么方法

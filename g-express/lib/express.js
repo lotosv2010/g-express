@@ -3,4 +3,7 @@ const Application = require('./application')
 function createApplication() {
   return new Application()
 }
+
+createApplication.Router = require('./router')
+
 module.exports = createApplication
