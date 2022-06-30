@@ -1,9 +1,7 @@
-const express = require('../g-express')
-// const express = require('express')
-const app = express()
-const port = 4000
-const userRouter = require('./route/userRouter')
-const roleRouter = require('./route/roleRouter')
+const express = require('../g-express');
+
+const app = express();
+const port = 4000;
 
 // 1.路径位 / 表示任何路径都能匹配到
 // 2.如果以这个路径(匹配开头一段路径)也可以匹配到
@@ -11,52 +9,15 @@ const roleRouter = require('./route/roleRouter')
 
 // 中间件不具备方法(针对路径拦截)，也不具备传递多个参数
 // 中间件肯定的基于路径来做(扩展性，扩展方法)
-app.use((req, res, next) => {
-  console.log(1);
-  next()
-})
-
-app.use('/user', userRouter)
-app.use('/role', roleRouter)
-
-app.use((req, res, next) => {
-  console.log(2);
-  next()
-})
-
-app.use((req, res, next) => {
-  console.log(3);
-  next()
-})
-
-app.use('/', (req, res, next) => {
-  next()
-  res.end('ok')
-})
 
 app.get('/', (req, res) => {
-  res.end('this is page!!')
-})
-app.post('/', (req, res) => {
-  res.end('this is page!!')
-})
-app.get('/list', (req, res) => {
-  res.end('this is list action!!')
-})
-app.post('/add', (req, res) => {
-  res.end('Got a add request')
-})
-app.put('/user', (req, res) => {
-  res.end('Got a PUT request at /user')
-})
-app.delete('/user', (req, res) => {
-  res.end('Got a DELETE request at /user')
+  res.end('this is page!!');
 })
 
-app.use((error, req, res, next) => {
-  // res.header("Content-Type", "application/json; charset=utf-8")
-  res.end('error' + error)
+app.get('/list', (req, res) => {
+  res.end('this is list action!!');
 })
+
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`Example app listening at http://localhost:${port}`);
 })
