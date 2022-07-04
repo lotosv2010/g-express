@@ -17,19 +17,37 @@ methods.forEach(method => {
 Router.prototype.handler = function (req, res) {
   const { pathname } = url.parse(req.url);
   const method = req.method?.toLowerCase();
-  const route = this.stack.find(layer => {
-    const match = layer.match(pathname);
+
+  let index = 0;
+  const next = () => {
+    if(index >= this.stack.length) {
+      res.end(`Can not get ${pathname}`);
+    }
+    const layer = this.stack[index++];
+    const match = layer?.match(pathname);
     if(match) {
       req.params = req.params || {};
       Object.assign(req.params, layer.params);
     }
-    return match && layer.method === method;
-  });
-  if(route) {
-    return route.handler(req, res);
+    if(match && layer.method === method) {
+      return layer.handler(req, res, next);
+    }
+    next();
   }
-  res.statusCode = 404;
-  res.end('404 Not Found');
+  next();
+  // const layer = this.stack.find(layer => {
+  //   const match = layer.match(pathname);
+  //   if(match) {
+  //     req.params = req.params || {};
+  //     Object.assign(req.params, layer.params);
+  //   }
+  //   return match && layer.method === method;
+  // });
+  // if(layer) {
+  //   return layer.handler(req, res);
+  // }
+  // res.statusCode = 404;
+  // res.end('404 Not Found');
 }
 
 module.exports = Router;
