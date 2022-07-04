@@ -19,7 +19,12 @@ app.get('/ab?cd', (req, res) => {
 });
 
 app.post('/ab*cd', (req, res) => {
-  res.end('get /ab*cd');
+  res.end('post /ab*cd');
+});
+
+app.get('/users/:userId/books/:bookId', (req, res) => {
+  console.log(req.params)
+  res.end('get /users/:userId/books/:bookId');
 });
 
 app.get('/list', (req, res) => {

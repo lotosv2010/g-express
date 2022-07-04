@@ -19,6 +19,12 @@ Router.prototype.handler = function (req, res) {
     const keys = [];
     const regexp = pathToRegexp(route.path, keys, {});
     const match = regexp.exec(pathname);
+    if(match) {
+      req.params = req.params || {};
+      keys.forEach((key, index) => {
+        req.params[key.name] = match[index + 1];
+      });
+    }
     return match && route.method === method;
   });
   if(route) {
