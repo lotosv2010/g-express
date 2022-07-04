@@ -14,6 +14,14 @@ app.get('/', (req, res) => {
   res.end('this is page!!');
 });
 
+app.get('/ab?cd', (req, res) => {
+  res.end('get /ab?cd');
+});
+
+app.post('/ab*cd', (req, res) => {
+  res.end('get /ab*cd');
+});
+
 app.get('/list', (req, res) => {
   res.end('get /list');
 });

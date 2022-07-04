@@ -12,6 +12,7 @@
   "author": "robin",
   "license": "ISC",
   "dependencies": {
-    "methods": "^1.1.2"
+    "methods": "^1.1.2",
+    "path-to-regexp": "0.1.7"
   }
 }
