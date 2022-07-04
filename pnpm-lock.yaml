@@ -1,0 +1,14 @@
+lockfileVersion: 5.4
+
+specifiers:
+  methods: ^1.1.2
+
+dependencies:
+  methods: 1.1.2
+
+packages:
+
+  /methods/1.1.2:
+    resolution: {integrity: sha512-iclAHeNqNm68zFtnZ0e+1L2yUIdvzNoauKU4WBA3VvH/vPFieF7qfRlwUZU+DA9P9bPXIS90ulxoUoCH23sV2w==}
+    engines: {node: '>= 0.6'}
+    dev: false

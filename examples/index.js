@@ -12,12 +12,28 @@ const port = 4000;
 
 app.get('/', (req, res) => {
   res.end('this is page!!');
-})
+});
 
 app.get('/list', (req, res) => {
-  res.end('this is list action!!');
-})
+  res.end('get /list');
+});
+
+app.post('/list', (req, res) => {
+  res.end('post /list');
+});
+
+app.put('/list', (req, res) => {
+  res.end('put /list');
+});
+
+app.patch('/list', (req, res) => {
+  res.end('patch /list');
+});
+
+app.delete('/list', (req, res) => {
+  res.end('delete /list');
+});
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
-})
+});

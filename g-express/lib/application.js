@@ -1,5 +1,6 @@
 const http = require('http');
 const Router = require('./router');
+const methods = require('methods');
 
 function App () {
   this._router = new Router();
@@ -7,12 +8,12 @@ function App () {
 
 /**
  * 收集路由
- * @param {*} path 
- * @param {*} handler 
  */
-App.prototype.get = function(path, handler) {
-  this._router.get(path, handler);
-};
+methods.forEach(method => {
+  App.prototype[method] = function(path, handler) {
+    this._router[method](path, handler);
+  };
+});
 
 /**
  * 监听
