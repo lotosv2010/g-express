@@ -1,6 +1,6 @@
 const url = require('url');
 const methods = require('methods');
-const pathToRegexp = require("path-to-regexp");
+const Layer = require("./layer");
 
 function Router () {
   this.stack = [];
@@ -8,24 +8,22 @@ function Router () {
 
 methods.forEach(method => {
   Router.prototype[method] = function(path, handler) {
-    this.stack.push({ path, method, handler });
+    const layer = new Layer(path, handler);
+    layer.method = method;
+    this.stack.push(layer);
   };
 });
 
 Router.prototype.handler = function (req, res) {
   const { pathname } = url.parse(req.url);
   const method = req.method?.toLowerCase();
-  const route = this.stack.find(route => { 
-    const keys = [];
-    const regexp = pathToRegexp(route.path, keys, {});
-    const match = regexp.exec(pathname);
+  const route = this.stack.find(layer => {
+    const match = layer.match(pathname);
     if(match) {
       req.params = req.params || {};
-      keys.forEach((key, index) => {
-        req.params[key.name] = match[index + 1];
-      });
+      Object.assign(req.params, layer.params);
     }
-    return match && route.method === method;
+    return match && layer.method === method;
   });
   if(route) {
     return route.handler(req, res);
