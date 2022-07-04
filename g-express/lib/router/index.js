@@ -44,4 +44,16 @@ Router.prototype.handler = function (req, res) {
   // res.end('404 Not Found');
 }
 
+Router.prototype.use = function(path, handlers) {
+  if(typeof path === 'function') {
+    handlers.unshift(path);
+    path = '/';
+  }
+  handlers.forEach(handler => {
+    const layer = new Layer(path, handler);
+    layer.isUseMiddleware = true;
+    this.stack.push(layer);
+  });
+}
+
 module.exports = Router;

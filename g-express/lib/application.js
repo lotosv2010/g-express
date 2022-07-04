@@ -15,6 +15,10 @@ methods.forEach(method => {
   };
 });
 
+App.prototype.use = function(path, ...handlers) {
+  this._router.use(path, handlers);
+}
+
 /**
  * 监听
  * @param  {...any} args 

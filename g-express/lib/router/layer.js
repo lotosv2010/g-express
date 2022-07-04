@@ -16,6 +16,16 @@ Layer.prototype.match = function (pathname) {
     });
     return true;
   }
+
+  //! 匹配use中间件的路径处理
+  if(this.isUseMiddleware) {
+    if(this.path === '/') {
+      return true;
+    }
+    if(pathname.startsWith(`${this.path}/`)) {
+      return true;
+    }
+  }
   return false;
 }
 

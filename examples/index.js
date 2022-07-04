@@ -9,6 +9,10 @@ const port = 4000;
 
 // 中间件不具备方法(针对路径拦截)，也不具备传递多个参数push({ path, method: 'get', handler });
 // 中间件肯定的基于路径来做(扩展性，扩展方法)
+app.use((req, res, next) => {
+  console.log('use');
+  next();
+});
 
 app.get('/', (req, res, next) => {
   console.log(1);
