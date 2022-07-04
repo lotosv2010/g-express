@@ -1,16 +1,19 @@
 const url = require('url');
 const methods = require('methods');
 const Layer = require("./layer");
+const Route = require('./route');
 
 function Router () {
   this.stack = [];
 }
 
 methods.forEach(method => {
-  Router.prototype[method] = function(path, handler) {
-    const layer = new Layer(path, handler);
-    layer.method = method;
+  Router.prototype[method] = function(path, handlers) {
+    const route = new Route();
+    const layer = new Layer(path, route.dispatch.bind(route));
+    layer.route = route;
     this.stack.push(layer);
+    route[method](path, handlers);
   };
 });
 
@@ -29,23 +32,14 @@ Router.prototype.handler = function (req, res) {
       req.params = req.params || {};
       Object.assign(req.params, layer.params);
     }
-    if(match && layer.method === method) {
+    //! 顶层只判断请求路径，内层判断请求方法
+    if(match) {
+      //! 顶层这里调用的 handler 其实就是 dispatch 函数
       return layer.handler(req, res, next);
     }
     next();
   }
   next();
-  // const layer = this.stack.find(layer => {
-  //   const match = layer.match(pathname);
-  //   if(match) {
-  //     req.params = req.params || {};
-  //     Object.assign(req.params, layer.params);
-  //   }
-  //   return match && layer.method === method;
-  // });
-  // if(layer) {
-  //   return layer.handler(req, res);
-  // }
   // res.statusCode = 404;
   // res.end('404 Not Found');
 }
