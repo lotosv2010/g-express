@@ -1,27 +1,32 @@
+const pathToRegexp = require("path-to-regexp");
+
 function Layer(path, handler) {
-  this.path = path
-  this.handler = handler
+  this.path = path;
+  this.handler = handler;
+  this.keys = [];
+  this.regexp = pathToRegexp(path, this.keys, {});
+  this.params = {};
 }
-Layer.prototype.match = function(pathname) {
-  // 这里可以扩展
-  if(this.path === pathname) {
-    return true
+
+Layer.prototype.match = function (pathname) {
+  const match = this.regexp.exec(pathname);
+  if(match) {
+    this.keys.forEach((key, index) => {
+      this.params[key.name] = match[index + 1];
+    });
+    return true;
   }
-  if(!this.route) { // 中间件
-    if(this.path == '/') {
-      return true
+
+  //! 匹配use中间件的路径处理
+  if(this.isUseMiddleware) {
+    if(this.path === '/') {
+      return true;
     }
-    // 中间件的匹配规则
-    return pathname.startsWith(this.path + '/')
+    if(pathname.startsWith(`${this.path}/`)) {
+      return true;
+    }
   }
+  return false;
 }
-Layer.prototype.handle_request = function(req, res, next) {
-  this.handler(req, res, next)
-}
-Layer.prototype.handle_error = function(error, req, res, next) {
-  if(this.handler.length == 4) {
-    return this.handler(error, req, res, next) // 调用错误处理中间件
-  }
-  next(error) // 普通的中间件
-}
-module.exports = Layer
+
+module.exports = Layer;

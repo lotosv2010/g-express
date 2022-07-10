@@ -1,37 +1,36 @@
-const Layer = require('./layer')
-const methods = require('methods')
+const methods = require('methods');
+const Layer = require('./layer');
 
-function Route() {
-  this.stack = []
-  this.methods = {} // 用来标识内部存过哪些方法
+function Route () {
+  this.stack = [];
 }
+
+/**
+ * 遍历执行当前路由对象中的所有处理函数
+ */
 Route.prototype.dispatch = function(req, res, out) {
-  let idx = 0
+  //! 遍历内层的 stack
+  let index = 0;
+  const method = req.method.toLowerCase();
   const next = () => {
-    if(idx >= this.stack.length) return out()
-    const layer = this.stack[idx++]
-    console.log(layer.method)
-    if(layer.method === req.method.toLowerCase()) {
-      layer.handle_request(req, res, next)
-    } else {
-      next()
+    if(index >= this.stack.length) return out();
+    const layer = this.stack[index++];
+    if(layer.method === method) {
+      return layer.handler(req, res, next);
     }
+    next();
   }
-  next()
+  next();
 }
 
-methods.forEach((method) => {
-  Route.prototype[method] = function(handlers) {
-    if(!Array.isArray(handlers)) {
-      handlers = [handlers]
-    }
+methods.forEach(method => {
+  Route.prototype[method] = function (path, handlers) {
     handlers.forEach(handler => {
-      const layer = new Layer('', handler) // 路径没有意义
-      layer.method = method // 标记layer上是什么方法
-      this.methods[method] = true
-      this.stack.push(layer)
+      const layer = new Layer(path, handler);
+      layer.method = method;
+      this.stack.push(layer);
     });
   }
-})
+});
 
-module.exports = Route
+module.exports = Route;

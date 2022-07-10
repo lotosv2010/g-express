@@ -1,6 +1,6 @@
 {
   "name": "g-express",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "g-express",
   "main": "index.js",
   "scripts": {
@@ -12,6 +12,7 @@
   "author": "robin",
   "license": "ISC",
   "dependencies": {
-    "methods": "^1.1.2"
+    "methods": "^1.1.2",
+    "path-to-regexp": "0.1.7"
   }
 }
