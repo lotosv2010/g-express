@@ -1,7 +1,7 @@
 const express = require('../lib/express');
 
 const app = express();
-const port = 4000;
+const port = 5500;
 
 // 1.路径位 / 表示任何路径都能匹配到
 // 2.如果以这个路径(匹配开头一段路径)也可以匹配到
