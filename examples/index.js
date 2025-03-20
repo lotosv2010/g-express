@@ -1,4 +1,4 @@
-const express = require('../g-express');
+const express = require('../lib/express');
 
 const app = express();
 const port = 4000;
