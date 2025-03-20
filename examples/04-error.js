@@ -4,33 +4,29 @@ const express = require('../lib/express');
 const app = express();
 let port = 5500;
 
-app.get('/user', (req, res, next) => {
-  console.log(1);
-  next(); // 何时掉用next 是由用户控制的
-}, (req, res, next) => {
-  console.log(2);
+app.use((req, res, next) => {
+  // console.log(b)
+  console.log('middleware1');
   next();
 }, (req, res, next) => {
-  console.log(3);
-  req.user = 100
+  console.log('middleware2');
+  next();
+});
+
+app.use('/user', (req, res, next) => {
+  console.log('middleware3');
   next();
 });
 
 app.get('/user', (req, res, next) => {
-  console.log(4);
-  req.user += 100;
-  res.end('this is home!! req.user = ' + req.user);
+  console.log(a)
+  res.end('this is get /user!!');
 });
 
 app.post('/user', (req, res, next) => {
-  console.log(5);
   res.writeHead(200, {
     'Content-Type': 'application/json;charset=utf-8'
-  });// 等价express中的下面两句
-  // res.set('Content-Type', 'application/json;charset=utf-8')
-  // res.set({
-  //   'Content-Type': 'application/json;charset=utf-8'
-  // });
+  });
   const data = JSON.stringify({
     data: 'this is post /user',
     code: 0
@@ -38,23 +34,27 @@ app.post('/user', (req, res, next) => {
   res.end(data);
 });
 
-app.put('/user', (req, res) => {
-  res.end('put /user');
+app.post('/home', (req, res, next) => {
+  res.writeHead(200, {
+    'Content-Type': 'application/json;charset=utf-8'
+  });
+  res.end(JSON.stringify({
+    data: 'this is post /home',
+    code: 0
+  }));
 });
 
-app.patch('/user', (req, res) => {
-  res.end('patch /user');
-});
-
-app.delete('/user', (req, res) => {
-  res.end('delete /user');
-});
-
-// 监听错误
 app.use((error, req, res, next) => {
-  console.log('error', error);
-  next(error);
+  res.statusCode = 500;
+  res.setHeader('Content-Type', 'application/json;charset=utf-8');
+  res.end(JSON.stringify({
+    message: error.message,
+    code: error.code,
+    name: error.name
+  }));
 })
+
+
 const server = app.listen(port, (error) => {
   console.log(`Example app listening on port ${port}!`);
 });
