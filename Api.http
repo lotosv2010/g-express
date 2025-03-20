@@ -1,0 +1,52 @@
+@hostname = http://localhost:5500
+@baseUrl = http://localhost:4000
+
+GET {{hostname}}/user?id=1&key=2 HTTP/1.1
+
+###
+POST {{hostname}}/user HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "age": 30
+}
+
+###
+GET {{baseUrl}}/list?id=1&key=2 HTTP/1.1
+
+###
+POST {{baseUrl}}/list HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "age": 30
+}
+
+###
+PUT {{baseUrl}}/list HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "age": 30
+}
+
+###
+PATCH {{baseUrl}}/list HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "age": 30
+}
+
+###
+DELETE {{baseUrl}}/list HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "age": 30
+}
