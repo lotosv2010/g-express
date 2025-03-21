@@ -1,5 +1,10 @@
 @baseUrl = http://localhost:5500
 
+
+GET {{baseUrl}}/user HTTP/1.1
+
+###
+
 GET {{baseUrl}}/user?userId=1&bookId=2 HTTP/1.1
 
 ###
