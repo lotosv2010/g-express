@@ -42,10 +42,46 @@ Content-Type: application/json
 }
 
 ###
+POST {{baseUrl}}/user/add HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "age": 30
+}
+
+###
+POST {{baseUrl}}/user/remove HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "age": 30
+}
+
+###
 POST {{baseUrl}}/home HTTP/1.1
 Content-Type: application/json
 
 {
   "name": "John Doe",
   "age": 30
+}
+
+###
+POST {{baseUrl}}/article/add HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "article1",
+  "age": 10
+}
+
+###
+POST {{baseUrl}}/article/remove HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "article2",
+  "age": 20
 }
